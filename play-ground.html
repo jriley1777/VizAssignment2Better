@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <title>Exploratory Data Assignment</title>
+
+    <meta charset="UTF-8">
+
+    <script src="js/jquery-1.9.1.min.js"></script>
+    <script src="js/d3.v3.min.js"></script>
+    <script src="js/crossfilter.min.js"></script>
+    <script src="js/dc.min.js"></script>
+
+    <link rel="stylesheet" href="css/dc.css"/>
+</head>
+<body>
+<div id="map" class="dc-chart">
+    <span>Number of People Per Age Group</span>
+    <a class="reset" href="javascript:usChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
+    <div class="clearfix"></div>
+</div>
+<div id="bar" class="dc-chart">
+    <span>Age Distribution</span>
+    <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <div class="clearfix"></div>
+</div>
+<div id="data-count">
+    <span class="filter-count"></span> selected out of <span class="total-count"></span> records
+</div>
+
+<script type="text/javascript">
+
+    var map = dc.geoChoroplethChart("#map")
+                .projection(d3.geo.albersUsa());
+    var barchart = dc.barChart("#bar");
+
+    d3.csv("data/users.csv", function (csv) {
+        var data = crossfilter(csv);
+        // define group all for counting
+        var all = data.groupAll();
+        var age = data.dimension(function(d) {
+            return d["Age"]});
+        console.log(age);
+        var ageGroup = age.group().reduceCount(function(d){return d["Age"];});
+        var states = data.dimension(function (d) {
+            return d["State"];
+        });
+        console.log(states);
+        var groupByState = states.group().reduceCount();
+        console.log(groupByState);
+    
+    d3.json('data/us-states.json',function(statesJson){
+                map.width(920)
+                    .height(500)
+                    .dimension(states)
+                    .group(groupByState)
+                    .colors(["#ccc", "#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
+                    .colorDomain([-1, 1000])
+                    .overlayGeoJson(statesJson.features, "state", function (d) {
+                        return d.properties.name.toLowerCase();
+                    });
+
+
+                barchart.width(920) // (optional) define chart width, :default = 200
+                    .height(300) // (optional) define chart height, :default = 200
+                    .transitionDuration(500) // (optional) define chart transition duration, :default = 500
+                    // (optional) define margins
+                    .margins({top: 10, right: 50, bottom: 30, left: 60})
+                    .dimension(age) // set dimension
+                    .group(ageGroup) // set group
+                    // define x scale
+                    .x(d3.scale.linear()
+                        .domain([5,100])
+                        .range([1,10]))
+                    .y(d3.scale.linear()
+                        .domain([10,8000])
+                        .range([1,10]))
+                    // define x axis units
+                    .xUnits(function(){return 100;})
+                    // (optional) whether this chart should generate user interactive brush to allow range
+                    // selection, :default=true.
+                    .brushOn(true)
+                    // (optional) whether svg title element(tooltip) should be generated for each bar using
+                    // (optional) whether chart should render titles, :default = false
+                    .renderTitle(true);
+
+                dc.dataCount("#data-count")
+                    .dimension(data) // set dimension to all data
+                    .group(all); // set group to data.groupAll()
+
+                dc.renderAll();
+        });
+    });
+
+</script>
+
+    <div class="clear"></div>
+
+    <div>
+        <a href="javascript:dc.renderAll();">Render All</a>
+        <a href="javascript:dc.filterAll(); dc.renderAll();">Filter All</a>
+    </div>
+</body>
+</html>
