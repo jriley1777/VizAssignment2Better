@@ -20,10 +20,10 @@
     <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
     <div class="clearfix"></div>
 </div>
-<div id="industry" class="bubble">
-    <span>Ratings Distribution</span>
+<div id="industry" class="dc-chart">
+    <span>Average Ratings Per State - Look here cause this is incredible</span>
     <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
-    <div class="clearfix"></div>
+    <div class="bubble"></div>
 </div>
 <div id="bar" class="dc-chart">
     <span>Age Distribution</span>
@@ -70,17 +70,17 @@
                     //add
                     function (p, v) {
                         ++p.count;
-                        p.total += (+v.book_rating + +v.book_rating) / 2;
-                        p.totalpub += (+v.year_publication + +v.year_publication) / 2;
-                        p.avg = Math.round(p.total / p.count);
+                        p.total += +v.book_rating;
+                        p.totalpub += +v.year_publication;
+                        p.avg = p.total / p.count;
                         return p;
                     },
                     //remove
                     function (p, v) {
                         --p.count;
-                        p.total -= (+v.book_rating + +v.book_rating) / 2;
-                        p.totalpub -= (+v.year_publication + +v.year_publication) / 2;
-                        p.avg = p.count == 0 ? 0 : Math.round(p.total / p.count);
+                        p.total -= +v.book_rating;
+                        p.totalpub -= +v.year_publication;
+                        p.avg = p.count == 0 ? 0 : p.total / p.count;
                         return p;
                     },
                     //init
@@ -139,32 +139,30 @@
                     .brushOn(true)
                     .renderTitle(true);
 
-                industryChart.width(300)
+                industryChart.width(400)
                     .height(800)
                     .margins({top: 30, right: 90, bottom: 50, left: 90})
                     .dimension(states)
                     .group(avgStateRating)
-                    .colors(["red", "#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
+                    .colors(["transparent"])
                     .colorDomain([0,10])
                     .keyAccessor(function (p) {
-                        return p.value.count;
+                        return 1;
                     })
                     .valueAccessor(function (p) {
-                        return p.value.avg*20;
+                        return p.value.avg*10;
                     })
                     .radiusValueAccessor(function (p) {
                         return p.value.count;
                     })
                     .colorAccessor(function (p) {
-                        return p.value.avg;
+                        return p.value.totalpub;
                     })
-                    .x(d3.scale.linear().domain([-2000, 2000]))
-                    .y(d3.scale.linear().domain([0, 300]))
+                    .x(d3.scale.linear().domain([-10, 10]))
+                    .y(d3.scale.linear().domain([-10, 100]))
                     .r(d3.scale.linear().domain([0, 100]))
                     .minRadiusWithLabel(0)
-                    .elasticY(true)
                     .yAxisPadding(100)
-                    .xAxisPadding(200)
                     .maxBubbleRelativeSize(0.07)
                     .renderLabel(true);
 
