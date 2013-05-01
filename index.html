@@ -153,13 +153,13 @@
                         return p.value.avg*10;
                     })
                     .radiusValueAccessor(function (p) {
-                        return p.value.count;
+                        return 1;
                     })
                     .colorAccessor(function (p) {
                         return p.value.totalpub;
                     })
                     .x(d3.scale.linear().domain([-10, 10]))
-                    .y(d3.scale.linear().domain([-10, 100]))
+                    .y(d3.scale.linear().domain([-10, 120]))
                     .r(d3.scale.linear().domain([0, 100]))
                     .minRadiusWithLabel(0)
                     .yAxisPadding(100)
