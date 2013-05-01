@@ -20,8 +20,18 @@
     <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
     <div class="clearfix"></div>
 </div>
+<div id="industry" class="bubble">
+    <span>Ratings Distribution</span>
+    <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <div class="clearfix"></div>
+</div>
 <div id="bar" class="dc-chart">
     <span>Age Distribution</span>
+    <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+    <div class="clearfix"></div>
+</div>
+<div id="bar2" class="dc-chart">
+    <span>Publish Year Distribution</span>
     <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
     <div class="clearfix"></div>
 </div>
@@ -34,21 +44,54 @@
     var map = dc.geoChoroplethChart("#map")
                 .projection(d3.geo.albersUsa());
     var barchart = dc.barChart("#bar");
+    var barchart2 = dc.barChart("#bar2");
+    var industryChart = dc.bubbleChart("#industry");
 
-    d3.csv("data/users.csv", function (csv) {
+    d3.csv("data/FinalData.csv", function (csv) {
         var data = crossfilter(csv);
-        // define group all for counting
-        var all = data.groupAll();
-        var age = data.dimension(function(d) {
-            return d["Age"]});
-        console.log(age);
-        var ageGroup = age.group().reduceCount(function(d){return d["Age"];});
+
+        var user = data.dimension(function(d){return d.user_id;});//fix
+        var usercount = user.groupAll();
+
+        var pubyear = data.dimension(function(d){return d.year_publication;});
+        var pubyearGroup = pubyear.group();
+
+        var age = data.dimension(function(d){return d.age;});//fix
+        var ageGroup = age.group();//fix
+
+        var r2 = data.dimension(function(d){return d.book_rating;});//fix
+        var ratingGroup = r2.group();
+        console.log(ratingGroup.key);
+
         var states = data.dimension(function (d) {
-            return d["State"];
+            return d.state;
         });
-        console.log(states);
-        var groupByState = states.group().reduceCount();
+        var avgStateRating = states.group().reduce(
+                    //add
+                    function (p, v) {
+                        ++p.count;
+                        p.total += (+v.book_rating + +v.book_rating) / 2;
+                        p.totalpub += (+v.year_publication + +v.year_publication) / 2;
+                        p.avg = Math.round(p.total / p.count);
+                        return p;
+                    },
+                    //remove
+                    function (p, v) {
+                        --p.count;
+                        p.total -= (+v.book_rating + +v.book_rating) / 2;
+                        p.totalpub -= (+v.year_publication + +v.year_publication) / 2;
+                        p.avg = p.count == 0 ? 0 : Math.round(p.total / p.count);
+                        return p;
+                    },
+                    //init
+                    function () {
+                        return {count: 0,total: 0, totalpub: 0,avg: 0};
+                    }
+            );
+        var groupByState = states.group();
         console.log(groupByState);
+
+
     
     d3.json('data/us-states.json',function(statesJson){
                 map.width(920)
@@ -56,38 +99,78 @@
                     .dimension(states)
                     .group(groupByState)
                     .colors(["#ccc", "#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
-                    .colorDomain([-1, 1000])
+                    .colorDomain([0,1000])
                     .overlayGeoJson(statesJson.features, "state", function (d) {
-                        return d.properties.name.toLowerCase();
+                        return d.properties.name;
                     });
 
 
                 barchart.width(920) // (optional) define chart width, :default = 200
                     .height(300) // (optional) define chart height, :default = 200
-                    .transitionDuration(500) // (optional) define chart transition duration, :default = 500
-                    // (optional) define margins
+                    .transitionDuration(500) // (optional) define chart transition duration, 
                     .margins({top: 10, right: 50, bottom: 30, left: 60})
-                    .dimension(age) // set dimension
-                    .group(ageGroup) // set group
-                    // define x scale
+                    .dimension(age)
+                    .group(ageGroup)
+                    .elasticY(true)
                     .x(d3.scale.linear()
-                        .domain([5,100])
+                        .domain([10,90])
                         .range([1,10]))
                     .y(d3.scale.linear()
                         .domain([10,8000])
                         .range([1,10]))
-                    // define x axis units
-                    .xUnits(function(){return 100;})
-                    // (optional) whether this chart should generate user interactive brush to allow range
-                    // selection, :default=true.
+                    .xUnits(function(){return 90-10;})
                     .brushOn(true)
-                    // (optional) whether svg title element(tooltip) should be generated for each bar using
-                    // (optional) whether chart should render titles, :default = false
                     .renderTitle(true);
+
+                barchart2.width(920) // (optional) define chart width, :default = 200
+                    .height(300) // (optional) define chart height, :default = 200
+                    .transitionDuration(500) // (optional) define chart transition duration, 
+                    .margins({top: 10, right: 50, bottom: 30, left: 60})
+                    .dimension(pubyear)
+                    .group(pubyearGroup)
+                    .elasticY(true)
+                    .x(d3.scale.linear()
+                        .domain([1950,2005])
+                        .range([1,10]))
+                    .y(d3.scale.linear()
+                        .domain([10,8000])
+                        .range([1,10]))
+                    .xUnits(function(){return 2005-1950;})
+                    .brushOn(true)
+                    .renderTitle(true);
+
+                industryChart.width(300)
+                    .height(800)
+                    .margins({top: 30, right: 90, bottom: 50, left: 90})
+                    .dimension(states)
+                    .group(avgStateRating)
+                    .colors(["red", "#E2F2FF", "#C4E4FF", "#9ED2FF", "#81C5FF", "#6BBAFF", "#51AEFF", "#36A2FF", "#1E96FF", "#0089FF", "#0061B5"])
+                    .colorDomain([0,10])
+                    .keyAccessor(function (p) {
+                        return p.value.count;
+                    })
+                    .valueAccessor(function (p) {
+                        return p.value.avg*20;
+                    })
+                    .radiusValueAccessor(function (p) {
+                        return p.value.count;
+                    })
+                    .colorAccessor(function (p) {
+                        return p.value.avg;
+                    })
+                    .x(d3.scale.linear().domain([-2000, 2000]))
+                    .y(d3.scale.linear().domain([0, 300]))
+                    .r(d3.scale.linear().domain([0, 100]))
+                    .minRadiusWithLabel(0)
+                    .elasticY(true)
+                    .yAxisPadding(100)
+                    .xAxisPadding(200)
+                    .maxBubbleRelativeSize(0.07)
+                    .renderLabel(true);
 
                 dc.dataCount("#data-count")
                     .dimension(data) // set dimension to all data
-                    .group(all); // set group to data.groupAll()
+                    .group(usercount); // set group to ndx.groupAll()
 
                 dc.renderAll();
         });
