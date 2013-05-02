@@ -3063,6 +3063,32 @@ dc.geoChoroplethChart = function (parent, chartGroup) {
 
     _chart.onClick = function (d, layerIndex) {
         var selectedRegion = geoJson(layerIndex).keyAccessor(d);
+        if (selectedRegion == "Illinois"){
+            crab = d3.select("#crab")
+                .append("svg")
+                    .attr("width", 1600)
+                    .attr("height", 900);
+
+            crab.append("image")
+                  .attr("xlink:href","./assets/happycrab2.gif")
+                  .attr("x", 300)
+                  .attr("y", 100)
+                  .attr("width", 800)
+                  .attr("height", 400)
+                  .transition()
+                  .ease("elastic")
+                  .attr("x", 300+(Math.random()*2-1)*100)
+                  .attr("y", 100+(Math.random()*2-1)*100)
+                  .delay(10)
+                  .duration(980)
+                  .remove();
+
+            crab.transition()
+                    .delay(1000)
+                    .duration(100)
+                    .remove()
+            }
+        else{}
         if (selectedRegion == _chart.filter()) {
             dc.events.trigger(function () {
                 _chart.filter(null);
