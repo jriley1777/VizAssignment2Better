@@ -2777,6 +2777,7 @@ dc.bubbleChart = function(parent, chartGroup) {
 
     function updateNodes(bubbleG) {
         dc.transition(bubbleG, _chart.transitionDuration())
+            .ease("bounce")
             .attr("transform", bubbleLocator)
             .selectAll("circle." + _chart.BUBBLE_CLASS)
             .attr("fill", _chart.updateBubbleColor)
