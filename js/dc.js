@@ -1775,13 +1775,9 @@ dc.abstractBubbleChart = function (_chart) {
         return (_chart.bubbleR(d) > _minRadiusWithLabel) ? 1 : 0;
     };
 
-    labelcolor = d3.scale.ordinal()
-                    .domain(0,10)
-                    .range(['#dbdbdc', '#d8d9db', '#d5d7da', '#d2d4d8','#a293b9', 
-                        '#a290b7', '#a18eb6', '#a08bb5', '#a089b3', '#9f87b2', '#9f84b0',
-                         '#9f82af', '#9e7fae', '#9e7dac', '#9e7bab', '#9e79aa', '#9e76a8',
-                          '#9e74a7', '#9e72a5', '#9e70a4', '#9f6da3', '#9f6ba1', '#9f69a0',
-                          '#9f679d', '#9d659a', '#9c6397', '#9a6194', '#995f90',"purple"]);
+    labelcolor = d3.scale.linear()
+                    .domain([0,10])
+                    .range(['#dbdbdc',"purple"]);
 
     _chart.doRenderLabel = function (bubbleGEnter) {
         if (_chart.renderLabel()) {
@@ -1793,7 +1789,7 @@ dc.abstractBubbleChart = function (_chart) {
                     .attr("dy", ".3em")
                     .style("font-family", "Arial")
                     .style("font-size",35)
-                    .attr("stroke-fill", function(p){
+                    .style("fill", function(p){
                         return labelcolor(p.value.avg);
                     })
                     .on("click", _chart.onClick);
@@ -1811,12 +1807,12 @@ dc.abstractBubbleChart = function (_chart) {
         if (_chart.renderLabel()) {
             var labels = bubbleGEnter.selectAll("text")
                 .text(labelFunction)
-                .attr("stroke-fill", function(p){
+                .style("fill", function(p){
                         return labelcolor(p.value.avg);
                     });
             dc.transition(labels, _chart.transitionDuration())
                 .attr("opacity", labelOpacity)
-                .attr("stroke", function(p){
+                .style("fill", function(p){
                         return labelcolor(p.value.avg);
                     });
         }
