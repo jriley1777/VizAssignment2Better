@@ -9,20 +9,18 @@
     <script src="js/jquery-1.9.1.min.js"></script>
     <script src="js/d3.v3.min.js"></script>
     <script src="js/crossfilter.min.js"></script>
-    <script src="js/dc.min.js"></script>
+    <script src="js/dc.js"></script>
 
     <link rel="stylesheet" href="css/dc.css"/>
 </head>
 <body>
 <div id="data-count">
     <span class="filter-count"></span> selected out of <span class="total-count"></span> records
-</div>
 <div id="map" class="dc-chart">
-    <span>Number of People Per Age Group</span>
+    <span>Number of Observations Per State</span>
     <a class="reset" href="javascript:usChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
     <span class="reset" style="display: none;"> | Current filter: <span class="filter"></span></span>
     <div class="clearfix"></div>
-</div>
 <div id="industry" class="dc-chart">
     <span>Average Ratings Per State - Look here cause this is incredible</span>
     <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
@@ -32,17 +30,28 @@
     <span>Age Distribution</span>
     <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
     <div class="clearfix"></div>
-</div>
+
 <div id="bar2" class="dc-chart">
     <span>Publish Year Distribution</span>
     <a class="reset" href="javascript:roundChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
     <div class="clearfix"></div>
 </div>
+</div>
+</div>
+
+<div class="clear"></div>
+
+<div align="bottom-right">
+        <!--<a href="javascript:dc.renderAll();">Render All</a>-->
+        <!--<a href="javascript:dc.filterAll(); dc.renderAll();">Filter All</a>-->
+</div>
 
 <script type="text/javascript">
 
     var map = dc.geoChoroplethChart("#map")
-                .projection(d3.geo.albersUsa());
+                .projection(d3.geo.albersUsa()
+                            .scale(500)
+                            .translate([500 / 2, 300 / 2]))
     var barchart = dc.barChart("#bar");
     var barchart2 = dc.barChart("#bar2");
     var industryChart = dc.bubbleChart("#industry");
@@ -94,8 +103,8 @@
 
     
     d3.json('data/us-states.json',function(statesJson){
-                map.width(920)
-                    .height(500)
+                map.width(500)
+                    .height(300)
                     .dimension(states)
                     .group(avgStateRating)
                     .colorAccessor(function (p) {
@@ -108,8 +117,8 @@
                     });
 
 
-                barchart.width(920) // (optional) define chart width, :default = 200
-                    .height(300) // (optional) define chart height, :default = 200
+                barchart.width(500) // (optional) define chart width, :default = 200
+                    .height(150) // (optional) define chart height, :default = 200
                     .transitionDuration(500) // (optional) define chart transition duration, 
                     .margins({top: 10, right: 50, bottom: 30, left: 60})
                     .dimension(age)
@@ -125,8 +134,8 @@
                     .brushOn(true)
                     .renderTitle(true);
 
-                barchart2.width(920) // (optional) define chart width, :default = 200
-                    .height(300) // (optional) define chart height, :default = 200
+                barchart2.width(500) // (optional) define chart width, :default = 200
+                    .height(150) // (optional) define chart height, :default = 200
                     .transitionDuration(500) // (optional) define chart transition duration, 
                     .margins({top: 10, right: 50, bottom: 30, left: 60})
                     .dimension(pubyear)
@@ -142,8 +151,8 @@
                     .brushOn(true)
                     .renderTitle(true);
 
-                industryChart.width(300)
-                    .height(500)
+                industryChart.width(500)
+                    .height(600)
                     .margins({top: 30, right: 90, bottom: 50, left: 90})
                     .dimension(states)
                     .group(avgStateRating)
@@ -178,12 +187,5 @@
     });
 
 </script>
-
-    <div class="clear"></div>
-
-    <div>
-        <a href="javascript:dc.renderAll();">Render All</a>
-        <a href="javascript:dc.filterAll(); dc.renderAll();">Filter All</a>
-    </div>
 </body>
 </html>
