@@ -1567,7 +1567,7 @@ dc.stackableChart = function (_chart) {
             }
         }
 
-        min = dc.utils.subtract(min, _chart.yAxisPadding());
+        min = dc.utils.subtract(min, _chart.yAxisPadding());    
 
         return min;
     };
@@ -1788,7 +1788,9 @@ dc.abstractBubbleChart = function (_chart) {
                     .attr("text-anchor", "middle")
                     .attr("dy", ".3em")
                     .style("font-family", "Arial")
-                    .style("font-size",35)
+                    .style("font-size", function(p){
+                        return Math.log(p.value.count+1)*5;
+                    })
                     .style("fill", function(p){
                         return labelcolor(p.value.avg);
                     })
@@ -1809,6 +1811,9 @@ dc.abstractBubbleChart = function (_chart) {
                 .text(labelFunction)
                 .style("fill", function(p){
                         return labelcolor(p.value.avg);
+                    })
+                .style("font-size", function(p){
+                        return Math.log(p.value.count+1)*5;
                     });
             dc.transition(labels, _chart.transitionDuration())
                 .attr("opacity", labelOpacity)
