@@ -141,19 +141,19 @@
 
 .dc-chart .selected circle {
     stroke-width: 3;
-    stroke: #ccc;
+    stroke: transparent;
     fill-opacity: 1;
 }
 
 .dc-chart .deselected circle {
     strok: none;
     fill-opacity: .5;
-    fill: #ccc;
+    fill: transparent;
 }
 
 .dc-chart .bubble {
     stroke: none;
-    fill-opacity: 0.4;
+    fill-opacity: 0;
 }
 
 .dc-data-count {

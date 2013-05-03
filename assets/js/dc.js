@@ -3075,7 +3075,7 @@ dc.geoChoroplethChart = function (parent, chartGroup) {
                     .attr("height", 900);
 
             crab.append("image")
-                  .attr("xlink:href","./assets/happycrab2.gif")
+                  .attr("xlink:href","./assets/happycrab.gif")
                   .attr("x", 300)
                   .attr("y", 100)
                   .attr("width", 800)
