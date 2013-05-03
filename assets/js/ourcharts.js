@@ -54,19 +54,6 @@ d3.csv("assets/data/FinalData.csv", function (csv) {
 
 
     d3.json('assets/data/us-states.json',function(statesJson){
-            map.width(500)
-                .height(300)
-                .dimension(states)
-                .group(avgStateRating)
-                .colors(['#dbdbdc', '#d8d9db', '#d5d7da', '#d2d4d8','#a293b9', '#a290b7', '#a18eb6', '#a08bb5', '#a089b3', '#9f87b2', '#9f84b0', '#9f82af', '#9e7fae', '#9e7dac', '#9e7bab', '#9e79aa', '#9e76a8', '#9e74a7', '#9e72a5', '#9e70a4', '#9f6da3', '#9f6ba1', '#9f69a0', '#9f679d', '#9d659a', '#9c6397', '#9a6194', '#995f90',"purple"])
-                .colorDomain([-100,1500])
-                .colorAccessor(function (p) {
-                    return p.count;
-                })
-                .overlayGeoJson(statesJson.features, "state", function (d) {
-                    return d.properties.name;
-                });
-
 
             barchart.width(500) // (optional) define chart width, :default = 200
                 .height(150) // (optional) define chart height, :default = 200
@@ -101,6 +88,19 @@ d3.csv("assets/data/FinalData.csv", function (csv) {
                 .xUnits(function(){return 2005-1950;})
                 .brushOn(true)
                 .renderTitle(true);
+
+            map.width(500)
+                .height(300)
+                .dimension(states)
+                .group(avgStateRating)
+                .colors(['#dbdbdc', '#d8d9db', '#d5d7da', '#d2d4d8','#a293b9', '#a290b7', '#a18eb6', '#a08bb5', '#a089b3', '#9f87b2', '#9f84b0', '#9f82af', '#9e7fae', '#9e7dac', '#9e7bab', '#9e79aa', '#9e76a8', '#9e74a7', '#9e72a5', '#9e70a4', '#9f6da3', '#9f6ba1', '#9f69a0', '#9f679d', '#9d659a', '#9c6397', '#9a6194', '#995f90',"purple"])
+                .colorDomain([-100,1500])
+                .colorAccessor(function (p) {
+                    return p.count;
+                })
+                .overlayGeoJson(statesJson.features, "state", function (d) {
+                    return d.properties.name;
+                });
 
             industryChart.width(500)
                 .height(600)

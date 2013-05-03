@@ -3071,8 +3071,8 @@ dc.geoChoroplethChart = function (parent, chartGroup) {
         if (selectedRegion == "Illinois"){
             crab = d3.select("#crab")
                 .append("svg")
-                    .attr("width", 1600)
-                    .attr("height", 900);
+                    .attr("width", 1200)
+                    .attr("height", 800);
 
             crab.append("image")
                   .attr("xlink:href","./assets/happycrab.gif")
