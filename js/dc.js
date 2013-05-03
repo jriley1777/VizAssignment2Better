@@ -1777,7 +1777,7 @@ dc.abstractBubbleChart = function (_chart) {
 
     labelcolor = d3.scale.linear()
                     .domain([0,10])
-                    .range(['#dbdbdc',"purple"]);
+                    .range(['white',"purple"]);
 
     _chart.doRenderLabel = function (bubbleGEnter) {
         if (_chart.renderLabel()) {
@@ -1789,7 +1789,7 @@ dc.abstractBubbleChart = function (_chart) {
                     .attr("dy", ".3em")
                     .style("font-family", "Arial")
                     .style("font-size", function(p){
-                        return Math.log(p.value.count+1)*5;
+                        return Math.max(10,Math.log(p.value.count+1)*4);
                     })
                     .style("fill", function(p){
                         return labelcolor(p.value.avg);
@@ -1813,7 +1813,7 @@ dc.abstractBubbleChart = function (_chart) {
                         return labelcolor(p.value.avg);
                     })
                 .style("font-size", function(p){
-                        return Math.log(p.value.count+1)*5;
+                        return Math.max(10,Math.log(p.value.count+1)*4);
                     });
             dc.transition(labels, _chart.transitionDuration())
                 .attr("opacity", labelOpacity)

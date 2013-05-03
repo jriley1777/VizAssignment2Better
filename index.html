@@ -159,7 +159,7 @@
                     .colors(["transparent"])
                     .colorDomain([0,10])
                     .keyAccessor(function (p) {
-                        return 0;
+                        return (Math.random()-.5)*10;
                     })
                     .valueAccessor(function (p) {
                         return p.value.avg*10+3;
@@ -170,7 +170,7 @@
                     .colorAccessor(function (p) {
                         return 1;
                     })
-                    .x(d3.scale.linear().domain([-10, 10]))
+                    .x(d3.scale.linear().domain([-15, 15]))
                     .y(d3.scale.linear().domain([0, 110]))
                     .r(d3.scale.linear().domain([0, 100]))
                     .minRadiusWithLabel(0)
